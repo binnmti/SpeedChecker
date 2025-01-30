@@ -1,0 +1,41 @@
+name: Build and Deploy ClickOnce App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: リポジトリのチェックアウト
+        uses: actions/checkout@v4
+
+      - name: .NET のセットアップ
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 9.0.x
+
+      - name: ClickOnce パブリッシュ
+        run: |
+          dotnet publish -r win-x64 -c Release /p:PublishSingleFile=true /p:SelfContained=true /p:IncludeAllContentForSelfExtract=true -o publish
+        shell: cmd
+
+      - name: アーティファクトのアップロード
+        uses: actions/upload-artifact@v4
+        with:
+          name: ClickOnceApp
+          path: publish/
+
+      - name: GitHub Releases にデプロイ
+        uses: softprops/action-gh-release@v2
+        with:
+          files: publish/*
+          tag_name: v1.0.${{ github.run_number }}
+          name: "Release v1.0.${{ github.run_number }}"
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
