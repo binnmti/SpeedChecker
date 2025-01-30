@@ -18,6 +18,7 @@ public partial class Form1 : Form
         _configuration = builder.Build();
 
         userNameTextBox.Text = Properties.Settings.Default.UserName;
+        AutoRestartCheckBox.Checked = Properties.Settings.Default.AutoRestart;
 
         SystemEvents.PowerModeChanged += SystemEvents_PowerModeChanged;
         SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
@@ -41,37 +42,69 @@ public partial class Form1 : Form
 
     private async Task Speedtest()
     {
-        if(button1.Enabled == false) return;
-        button1.Enabled = false;
-        if (!string.IsNullOrWhiteSpace(userNameTextBox.Text))
+        if (button1.Enabled == false) return;
+        if (string.IsNullOrWhiteSpace(userNameTextBox.Text))
         {
-            var processStartInfo = new ProcessStartInfo
-            {
-                FileName = "speedtest.exe",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-            using var process = new Process { StartInfo = processStartInfo };
-            process.Start();
-            string output = await process.StandardOutput.ReadToEndAsync();
-            string error = await process.StandardError.ReadToEndAsync();
-            process.WaitForExit();
-            if (process.ExitCode != 0)
-            {
-                throw new Exception($"Command failed with exit code {process.ExitCode}: {error}");
-            }
+            DownloadTextBox.Text = $"名前を入力しないと計測出来ません";
+            return;
+        }
+
+        button1.Enabled = false;
+        Cursor = Cursors.WaitCursor;
+        DownloadTextBox.Text = $"計測中";
+
+        try
+        {
+            var output = "";
+            await Task.Run(async ()  => { 
+                var processStartInfo = new ProcessStartInfo
+                {
+                    FileName = "speedtest.exe",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+                using var process = new Process { StartInfo = processStartInfo };
+                process.OutputDataReceived += (sender, e) =>
+                {
+                    if (e.Data == null) return;
+                    output += e.Data + Environment.NewLine;
+                    // 改行のみは表示しない
+                    if (e.Data == Environment.NewLine) return;
+                    Invoke(() =>
+                    {
+                        DownloadTextBox.Text += e.Data.Trim() + Environment.NewLine;
+                        DownloadTextBox.SelectionStart = DownloadTextBox.Text.Length;
+                        DownloadTextBox.ScrollToCaret();
+                    });
+                };
+                process.Start();
+                process.BeginOutputReadLine();
+                string error = await process.StandardError.ReadToEndAsync();
+                process.WaitForExit();
+                if (process.ExitCode != 0)
+                {
+                    Invoke(() => { DownloadTextBox.Text = error; });
+                }
+            });
+
             var result = SpeedtestResult.Parse(userNameTextBox.Text, output);
             using var connection = new SqlConnection(_configuration["connectionString"]);
             connection.Open();
             connection.Insert(result);
-
-            DownloadTextBox.Text = $"{result.DownloadSpeed} {result.DownloadSpeedUnit}";
-            UploadTextBox.Text = $"{result.UploadSpeed} {result.UploadSpeedUnit}";
+            DownloadTextBox.Text = $"ダウンロード : {result.DownloadSpeed} {result.DownloadSpeedUnit}{Environment.NewLine}アップロード : {result.UploadSpeed} {result.UploadSpeedUnit}";
+        }
+        catch (Exception ex)
+        {
+            DownloadTextBox.Text = ex.Message;
+        }
+        finally
+        {
+            Cursor = Cursors.Default;
+            button1.Enabled = true;
         }
 
-        button1.Enabled = true;
     }
 
 
@@ -88,6 +121,7 @@ public partial class Form1 : Form
     private void Form1_FormClosing(object sender, FormClosingEventArgs e)
     {
         Properties.Settings.Default.UserName = userNameTextBox.Text;
+        Properties.Settings.Default.AutoRestart = AutoRestartCheckBox.Checked;
         Properties.Settings.Default.Save();
 
         SystemEvents.PowerModeChanged -= SystemEvents_PowerModeChanged;
@@ -96,8 +130,31 @@ public partial class Form1 : Form
 
     private void checkBox1_CheckedChanged(object sender, EventArgs e)
     {
-        Hide();
-        notifyIcon1.Visible = true;
+        RegisterStartup(AutoRestartCheckBox.Checked);
+    }
+
+    private static void RegisterStartup(bool on)
+    {
+        string appName = "SpeedChecker";
+        string exePath = Application.ExecutablePath;
+
+        using var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+        if (key == null) return;
+
+        if (on)
+        {
+            if (key.GetValue(appName) == null)
+            {
+                key.SetValue(appName, exePath);
+            }
+        }
+        else
+        {
+            if (key.GetValue(appName) != null)
+            {
+                key.DeleteValue(appName, false);
+            }
+        }
     }
 
     private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -105,10 +162,17 @@ public partial class Form1 : Form
         Show();
         WindowState = FormWindowState.Normal;
         notifyIcon1.Visible = false;
+        checkBox2.Checked = false;
     }
 
     private async void timer1_Tick(object sender, EventArgs e)
     {
         await Speedtest();
+    }
+
+    private void checkBox2_CheckedChanged(object sender, EventArgs e)
+    {
+        Hide();
+        notifyIcon1.Visible = true;
     }
 }

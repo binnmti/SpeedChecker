@@ -33,31 +33,29 @@
             button1 = new Button();
             userNameTextBox = new TextBox();
             label1 = new Label();
-            checkBox1 = new CheckBox();
+            AutoRestartCheckBox = new CheckBox();
             notifyIcon1 = new NotifyIcon(components);
             timer1 = new System.Windows.Forms.Timer(components);
             DownloadTextBox = new TextBox();
-            label2 = new Label();
-            label3 = new Label();
-            UploadTextBox = new TextBox();
+            checkBox2 = new CheckBox();
             SuspendLayout();
             // 
             // button1
             // 
             button1.Enabled = false;
-            button1.Location = new Point(223, 63);
+            button1.Location = new Point(12, 56);
             button1.Name = "button1";
-            button1.Size = new Size(112, 34);
+            button1.Size = new Size(607, 129);
             button1.TabIndex = 0;
-            button1.Text = "button1";
+            button1.Text = "計測";
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
             // userNameTextBox
             // 
-            userNameTextBox.Location = new Point(112, 12);
+            userNameTextBox.Location = new Point(81, 6);
             userNameTextBox.Name = "userNameTextBox";
-            userNameTextBox.Size = new Size(223, 31);
+            userNameTextBox.Size = new Size(538, 31);
             userNameTextBox.TabIndex = 1;
             userNameTextBox.TextChanged += userNameTextBox_TextChanged;
             // 
@@ -66,20 +64,20 @@
             label1.AutoSize = true;
             label1.Location = new Point(12, 9);
             label1.Name = "label1";
-            label1.Size = new Size(94, 25);
+            label1.Size = new Size(48, 25);
             label1.TabIndex = 2;
-            label1.Text = "UserName";
+            label1.Text = "名前";
             // 
-            // checkBox1
+            // AutoRestartCheckBox
             // 
-            checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(12, 67);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(74, 29);
-            checkBox1.TabIndex = 3;
-            checkBox1.Text = "常駐";
-            checkBox1.UseVisualStyleBackColor = true;
-            checkBox1.CheckedChanged += checkBox1_CheckedChanged;
+            AutoRestartCheckBox.AutoSize = true;
+            AutoRestartCheckBox.Location = new Point(12, 191);
+            AutoRestartCheckBox.Name = "AutoRestartCheckBox";
+            AutoRestartCheckBox.Size = new Size(160, 29);
+            AutoRestartCheckBox.TabIndex = 3;
+            AutoRestartCheckBox.Text = "自動的に再起動";
+            AutoRestartCheckBox.UseVisualStyleBackColor = true;
+            AutoRestartCheckBox.CheckedChanged += checkBox1_CheckedChanged;
             // 
             // notifyIcon1
             // 
@@ -95,48 +93,33 @@
             // 
             // DownloadTextBox
             // 
-            DownloadTextBox.Location = new Point(112, 114);
+            DownloadTextBox.Location = new Point(12, 226);
+            DownloadTextBox.Multiline = true;
             DownloadTextBox.Name = "DownloadTextBox";
             DownloadTextBox.ReadOnly = true;
-            DownloadTextBox.Size = new Size(223, 31);
+            DownloadTextBox.ScrollBars = ScrollBars.Vertical;
+            DownloadTextBox.Size = new Size(607, 155);
             DownloadTextBox.TabIndex = 4;
             // 
-            // label2
+            // checkBox2
             // 
-            label2.AutoSize = true;
-            label2.Location = new Point(12, 114);
-            label2.Name = "label2";
-            label2.Size = new Size(94, 25);
-            label2.TabIndex = 5;
-            label2.Text = "Download";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(36, 167);
-            label3.Name = "label3";
-            label3.Size = new Size(70, 25);
-            label3.TabIndex = 6;
-            label3.Text = "Upload";
-            // 
-            // UploadTextBox
-            // 
-            UploadTextBox.Location = new Point(112, 164);
-            UploadTextBox.Name = "UploadTextBox";
-            UploadTextBox.ReadOnly = true;
-            UploadTextBox.Size = new Size(223, 31);
-            UploadTextBox.TabIndex = 7;
+            checkBox2.AutoSize = true;
+            checkBox2.Location = new Point(178, 191);
+            checkBox2.Name = "checkBox2";
+            checkBox2.Size = new Size(217, 29);
+            checkBox2.TabIndex = 8;
+            checkBox2.Text = "このアプリをタスクトレイ化";
+            checkBox2.UseVisualStyleBackColor = true;
+            checkBox2.CheckedChanged += checkBox2_CheckedChanged;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(364, 201);
-            Controls.Add(UploadTextBox);
-            Controls.Add(label3);
-            Controls.Add(label2);
+            ClientSize = new Size(631, 391);
+            Controls.Add(checkBox2);
             Controls.Add(DownloadTextBox);
-            Controls.Add(checkBox1);
+            Controls.Add(AutoRestartCheckBox);
             Controls.Add(label1);
             Controls.Add(userNameTextBox);
             Controls.Add(button1);
@@ -152,12 +135,10 @@
         private Button button1;
         private TextBox userNameTextBox;
         private Label label1;
-        private CheckBox checkBox1;
+        private CheckBox AutoRestartCheckBox;
         private NotifyIcon notifyIcon1;
         private System.Windows.Forms.Timer timer1;
         private TextBox DownloadTextBox;
-        private Label label2;
-        private Label label3;
-        private TextBox UploadTextBox;
+        private CheckBox checkBox2;
     }
 }

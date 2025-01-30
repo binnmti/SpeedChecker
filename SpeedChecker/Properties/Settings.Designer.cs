@@ -34,5 +34,17 @@ namespace SpeedChecker.Properties {
                 this["UserName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AutoRestart {
+            get {
+                return ((bool)(this["AutoRestart"]));
+            }
+            set {
+                this["AutoRestart"] = value;
+            }
+        }
     }
 }

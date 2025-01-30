@@ -37,6 +37,8 @@ public class SpeedtestResult
 
     public static SpeedtestResult Parse(string userName, string output)
     {
+        // TODO:Successにならないケースがあるので対応が必要
+
         var result = new SpeedtestResult
         {
             UserName = userName
