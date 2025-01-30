@@ -36,6 +36,10 @@
             checkBox1 = new CheckBox();
             notifyIcon1 = new NotifyIcon(components);
             timer1 = new System.Windows.Forms.Timer(components);
+            DownloadTextBox = new TextBox();
+            label2 = new Label();
+            label3 = new Label();
+            UploadTextBox = new TextBox();
             SuspendLayout();
             // 
             // button1
@@ -69,7 +73,7 @@
             // checkBox1
             // 
             checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(12, 63);
+            checkBox1.Location = new Point(12, 67);
             checkBox1.Name = "checkBox1";
             checkBox1.Size = new Size(74, 29);
             checkBox1.TabIndex = 3;
@@ -89,11 +93,49 @@
             timer1.Interval = 3600000;
             timer1.Tick += timer1_Tick;
             // 
+            // DownloadTextBox
+            // 
+            DownloadTextBox.Location = new Point(112, 114);
+            DownloadTextBox.Name = "DownloadTextBox";
+            DownloadTextBox.ReadOnly = true;
+            DownloadTextBox.Size = new Size(223, 31);
+            DownloadTextBox.TabIndex = 4;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(12, 114);
+            label2.Name = "label2";
+            label2.Size = new Size(94, 25);
+            label2.TabIndex = 5;
+            label2.Text = "Download";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(36, 167);
+            label3.Name = "label3";
+            label3.Size = new Size(70, 25);
+            label3.TabIndex = 6;
+            label3.Text = "Upload";
+            // 
+            // UploadTextBox
+            // 
+            UploadTextBox.Location = new Point(112, 164);
+            UploadTextBox.Name = "UploadTextBox";
+            UploadTextBox.ReadOnly = true;
+            UploadTextBox.Size = new Size(223, 31);
+            UploadTextBox.TabIndex = 7;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(364, 116);
+            ClientSize = new Size(364, 201);
+            Controls.Add(UploadTextBox);
+            Controls.Add(label3);
+            Controls.Add(label2);
+            Controls.Add(DownloadTextBox);
             Controls.Add(checkBox1);
             Controls.Add(label1);
             Controls.Add(userNameTextBox);
@@ -113,5 +155,9 @@
         private CheckBox checkBox1;
         private NotifyIcon notifyIcon1;
         private System.Windows.Forms.Timer timer1;
+        private TextBox DownloadTextBox;
+        private Label label2;
+        private Label label3;
+        private TextBox UploadTextBox;
     }
 }

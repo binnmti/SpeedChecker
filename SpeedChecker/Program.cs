@@ -1,17 +1,27 @@
+using Microsoft.Win32;
+
 namespace SpeedChecker
 {
     internal static class Program
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
+            RegisterStartup();
             ApplicationConfiguration.Initialize();
             Application.Run(new Form1());
+        }
+
+        private static void RegisterStartup()
+        {
+            string appName = "SpeedChecker";
+            string exePath = Application.ExecutablePath;
+
+            using var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+            if (key.GetValue(appName) == null)
+            {
+                key.SetValue(appName, exePath);
+            }
         }
     }
 }

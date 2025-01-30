@@ -17,6 +17,8 @@ public partial class Form1 : Form
         var builder = new ConfigurationBuilder().AddUserSecrets<Form1>();
         _configuration = builder.Build();
 
+        userNameTextBox.Text = Properties.Settings.Default.UserName;
+
         SystemEvents.PowerModeChanged += SystemEvents_PowerModeChanged;
         SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
     }
@@ -39,36 +41,43 @@ public partial class Form1 : Form
 
     private async Task Speedtest()
     {
-        if (string.IsNullOrWhiteSpace(userNameTextBox.Text)) return;
+        if(button1.Enabled == false) return;
+        button1.Enabled = false;
+        if (!string.IsNullOrWhiteSpace(userNameTextBox.Text))
+        {
+            var processStartInfo = new ProcessStartInfo
+            {
+                FileName = "speedtest.exe",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+            using var process = new Process { StartInfo = processStartInfo };
+            process.Start();
+            string output = await process.StandardOutput.ReadToEndAsync();
+            string error = await process.StandardError.ReadToEndAsync();
+            process.WaitForExit();
+            if (process.ExitCode != 0)
+            {
+                throw new Exception($"Command failed with exit code {process.ExitCode}: {error}");
+            }
+            var result = SpeedtestResult.Parse(userNameTextBox.Text, output);
+            using var connection = new SqlConnection(_configuration["connectionString"]);
+            connection.Open();
+            connection.Insert(result);
 
-        var processStartInfo = new ProcessStartInfo
-        {
-            FileName = "speedtest.exe",
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-            CreateNoWindow = true
-        };
-        using var process = new Process { StartInfo = processStartInfo };
-        process.Start();
-        string output = await process.StandardOutput.ReadToEndAsync();
-        string error = await process.StandardError.ReadToEndAsync();
-        process.WaitForExit();
-        if (process.ExitCode != 0)
-        {
-            throw new Exception($"Command failed with exit code {process.ExitCode}: {error}");
+            DownloadTextBox.Text = $"{result.DownloadSpeed} {result.DownloadSpeedUnit}";
+            UploadTextBox.Text = $"{result.UploadSpeed} {result.UploadSpeedUnit}";
         }
-        using var connection = new SqlConnection(_configuration["connectionString"]);
-        connection.Open();
-        connection.Insert(SpeedtestResult.Parse(userNameTextBox.Text, output));
+
+        button1.Enabled = true;
     }
 
 
     private async void button1_Click(object sender, EventArgs e)
     {
-        button1.Enabled = false;
         await Speedtest();
-        button1.Enabled = true;
     }
 
     private void userNameTextBox_TextChanged(object sender, EventArgs e)
@@ -78,9 +87,11 @@ public partial class Form1 : Form
 
     private void Form1_FormClosing(object sender, FormClosingEventArgs e)
     {
+        Properties.Settings.Default.UserName = userNameTextBox.Text;
+        Properties.Settings.Default.Save();
+
         SystemEvents.PowerModeChanged -= SystemEvents_PowerModeChanged;
         SystemEvents.SessionSwitch -= SystemEvents_SessionSwitch;
-        base.OnFormClosing(e);
     }
 
     private void checkBox1_CheckedChanged(object sender, EventArgs e)
