@@ -32,8 +32,13 @@ jobs:
 
       - name: ClickOnce パブリッシュ
         run: |
-          dotnet publish -r win-x64 -c Release /p:SelfContained=true /p:SelfContained=true /p:IncludeAllContentForSelfExtract=true -o publish
+          dotnet publish -r win-x64 -c Release /p:PublishSingleFile=true /p:SelfContained=true /p:IncludeAllContentForSelfExtract=true -o publish
         shell: cmd
+
+      - name: Create archive with extra file
+        run: |
+          New-Item -Path "speedtest.exe" -ItemType File -Value "このファイルをアーカイブに追加"
+          Compress-Archive -Path "bin/Release/*", "speedtest.exe" -DestinationPath "release-package.zip"
 
       - name: アーティファクトのアップロード
         uses: actions/upload-artifact@v4
