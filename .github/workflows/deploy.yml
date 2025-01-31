@@ -6,7 +6,7 @@ on:
       - main
 
 permissions:
-  contents: write  # ← GitHub Releases に書き込む権限を付与
+  contents: write
 
 jobs:
   build:
@@ -32,7 +32,7 @@ jobs:
 
       - name: ClickOnce パブリッシュ
         run: |
-          dotnet publish -r win-x64 -c Release /p:PublishSingleFile=true /p:SelfContained=true /p:IncludeAllContentForSelfExtract=true -o publish
+          dotnet publish -r win-x64 -c Release /p:SelfContained=true /p:SelfContained=true /p:IncludeAllContentForSelfExtract=true -o publish
         shell: cmd
 
       - name: アーティファクトのアップロード
