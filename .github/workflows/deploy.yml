@@ -16,6 +16,15 @@ jobs:
       - name: リポジトリのチェックアウト
         uses: actions/checkout@v4
 
+      - name: Create appsettings.json
+        run: |
+            echo '{
+                "AppSettings": {
+                "ConnectionString": "${{ secrets.ConnectionString }}",
+                "DiscordWebhookUrl": "${{ secrets.DiscordWebhookUrl }}",
+                }
+            }' > appsettings.json
+
       - name: .NET のセットアップ
         uses: actions/setup-dotnet@v3
         with:

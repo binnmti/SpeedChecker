@@ -48,11 +48,19 @@ public class SpeedtestResult
         {
             result.Server = serverMatch.Groups[1].Value.Trim();
         }
+        else
+        {
+            throw new FormatException("Server not found");
+        }
 
         var ispMatch = Regex.Match(output, @"ISP:\s*(.+)");
         if (ispMatch.Success)
         {
             result.ISP = ispMatch.Groups[1].Value.Trim();
+        }
+        else
+        {
+            throw new FormatException("ISP not found");
         }
 
         // Idle Latency
@@ -64,6 +72,10 @@ public class SpeedtestResult
             result.IdleLow = double.Parse(idleMatch.Groups[3].Value);
             result.IdleHigh = double.Parse(idleMatch.Groups[4].Value);
         }
+        else
+        {
+            throw new FormatException("Idle Latency not found");
+        }
 
         // Download Speed & Data Used
         var downloadMatch = Regex.Match(output, @"Download:\s*([\d.]+)\s*(\w+)\s*\(data used:\s*([\d.]+)\s*(\w+)\)");
@@ -73,6 +85,10 @@ public class SpeedtestResult
             result.DownloadSpeedUnit = downloadMatch.Groups[2].Value;
             result.DownloadDataUsed = double.Parse(downloadMatch.Groups[3].Value);
             result.DownloadDataUsedUnit = downloadMatch.Groups[4].Value;
+        }
+        else
+        {
+            throw new FormatException("Download Speed & Data Used not found");
         }
 
         // Download Latency
@@ -84,6 +100,10 @@ public class SpeedtestResult
             result.DownloadLow = double.Parse(downloadLatencyMatch.Groups[3].Value);
             result.DownloadHigh = double.Parse(downloadLatencyMatch.Groups[4].Value);
         }
+        else
+        {
+            throw new FormatException("Download Latency not found");
+        }
 
         // Upload Speed & Data Used
         var uploadMatch = Regex.Match(output, @"Upload:\s*([\d.]+)\s*(\w+)\s*\(data used:\s*([\d.]+)\s*(\w+)\)");
@@ -93,6 +113,10 @@ public class SpeedtestResult
             result.UploadSpeedUnit = uploadMatch.Groups[2].Value;
             result.UploadDataUsed = double.Parse(uploadMatch.Groups[3].Value);
             result.UploadDataUsedUnit = uploadMatch.Groups[4].Value;
+        }
+        else
+        {
+            throw new FormatException("Upload Speed & Data Used not found");
         }
 
         // Upload Latency
@@ -105,17 +129,29 @@ public class SpeedtestResult
             result.UploadLow = double.Parse(uploadLatencyMatch.Groups[3].Value);
             result.UploadHigh = double.Parse(uploadLatencyMatch.Groups[4].Value);
         }
+        else
+        {
+            throw new FormatException("Upload Latency not found");
+        }
 
         var packetLossMatch = Regex.Match(output, @"Packet Loss:\s*([\d.]+)%");
         if (packetLossMatch.Success)
         {
             result.PacketLoss = double.Parse(packetLossMatch.Groups[1].Value);
         }
+        else
+        {
+            throw new FormatException("Packet Loss not found");
+        }
 
         var resultUrlMatch = Regex.Match(output, @"Result URL:\s*(.+)");
         if (resultUrlMatch.Success)
         {
             result.ResultUrl = resultUrlMatch.Groups[1].Value;
+        }
+        else
+        {
+            throw new FormatException("Result URL not found");
         }
         result.CreateDate = DateTime.Now;
         return result;

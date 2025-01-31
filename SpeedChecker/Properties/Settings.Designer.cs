@@ -46,5 +46,29 @@ namespace SpeedChecker.Properties {
                 this["AutoRestart"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DbWritable {
+            get {
+                return ((bool)(this["DbWritable"]));
+            }
+            set {
+                this["DbWritable"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool HourCheck {
+            get {
+                return ((bool)(this["HourCheck"]));
+            }
+            set {
+                this["HourCheck"] = value;
+            }
+        }
     }
 }
